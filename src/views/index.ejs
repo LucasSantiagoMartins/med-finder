@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MedFinder - Encontre Medicamentos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      :root {
+        --primary: #0d6efd;
+        --background: #ffffff;
+        --muted: #f8f9fa;
+        --text-muted: #6c757d;
+        --border: #e9ecef;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--background);
+        color: #212529;
+        overflow-x: hidden;
+      }
+
+      .gradient-hero {
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+      }
+
+      .card-elevated {
+        background: white;
+        border-radius: 1.25rem;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
+      }
+
+      .card-interactive {
+        background: white;
+        border-radius: 1.25rem;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .card-interactive:hover {
+        border-color: var(--primary);
+        box-shadow: 0 12px 25px rgba(13, 110, 253, 0.08);
+        transform: translateY(-4px);
+      }
+
+      .input-search-container {
+        position: relative;
+        max-width: 700px;
+        margin: 0 auto;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .input-search {
+        height: 4.5rem;
+        padding-left: 3.5rem;
+        padding-right: 9rem;
+        border-radius: 100px;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+      }
+
+      .input-search:focus {
+        box-shadow: 0 10px 35px rgba(13, 110, 253, 0.12);
+        border-color: var(--primary);
+      }
+
+      .btn-search {
+        position: absolute;
+        right: 0.6rem;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 100px;
+        padding: 0.85rem 1.8rem;
+      }
+
+      .upload-area {
+        width: 100%;
+        height: 150px;
+        border: 2px dashed var(--border);
+        border-radius: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: var(--muted);
+        transition: all 0.2s;
+        border: none;
+      }
+
+      .badge-pill-custom {
+        background-color: #e7f1ff;
+        color: #0d6efd;
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Animações Suaves */
+      .fade-out { 
+        opacity: 0; 
+        transform: translateY(-20px);
+        transition: all 0.5s ease; 
+        pointer-events: none; 
+      }
+
+      #search-results-container { 
+        display: none; 
+        opacity: 0; 
+      }
+
+      .card-result-anim {
+        opacity: 0;
+        transform: translateY(40px);
+        animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      }
+
+      @keyframes slideUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .stagger-1 { animation-delay: 0.1s; }
+      .stagger-2 { animation-delay: 0.2s; }
+      .stagger-3 { animation-delay: 0.3s; }
+      .stagger-4 { animation-delay: 0.4s; }
+
+    </style>
+  </head>
+  <body>
+    <header class="bg-white border-bottom sticky-top py-2">
+      <div class="container d-flex align-items-center justify-content-between">
+        <a href="/" class="d-flex align-items-center gap-2 text-decoration-none">
+          <div class="p-2 gradient-hero rounded-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px">
+            <i data-lucide="pill" class="text-white" size="20"></i>
+          </div>
+          <span class="fw-bold fs-4 text-primary">MedFinder</span>
+        </a>
+
+        <nav class="d-flex align-items-center gap-3">
+          <a href="/calendario" class="text-muted text-decoration-none small fw-medium d-none d-md-block">
+            <i data-lucide="calendar" size="16" class="me-1"></i>Calendário
+          </a>
+
+          <% if (!usuario) { %>
+            <a href="/autenticacao/entrar" class="btn btn-outline-primary btn-sm px-3 rounded-pill">Entrar</a>
+            <a href="/autenticacao/criar-conta" class="btn btn-primary btn-sm px-3 rounded-pill">Criar Conta</a>
+          <% } else { %>
+            <div class="dropdown">
+              <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width:40px; height:40px" data-bs-toggle="dropdown">
+                <%= usuario.nome.split(" ").map(n => n[0]).join("").substring(0,2).toUpperCase() %>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                <li class="dropdown-item-text small text-muted">
+                  <strong><%= usuario.nome %></strong><br/><%= usuario.tipo_usuario %>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/perfil">Meu Perfil</a></li>
+                <li><a class="dropdown-item text-danger" href="/autenticacao/logout">Terminar Sessão</a></li>
+              </ul>
+            </div>
+          <% } %>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-wrapper">
+      <section id="hero-section" class="py-5 mt-5">
+        <div class="container text-center">
+          <div id="hero-content" class="transition-element">
+            <div class="badge-pill-custom mb-4 mx-auto">
+              <i data-lucide="sparkles" size="16"></i>
+              <span>Encontre medicamentos perto de si</span>
+            </div>
+            <h1 class="display-4 fw-bold mb-3">Procure medicamentos em <br /><span class="text-primary">farmácias locais</span></h1>
+            <p class="text-secondary mb-5 mx-auto" style="max-width: 600px">Pesquise medicamentos e encontre as farmácias mais próximas com stock disponível. Simples, rápido e confiável.</p>
+          </div>
+
+          <div class="input-search-container mb-5" id="search-box-wrapper">
+            <i data-lucide="search" class="position-absolute text-muted" style="left: 1.5rem; top: 50%; transform: translateY(-50%)"></i>
+            <input type="text" id="input-pesquisa" class="form-control input-search" placeholder="Qual medicamento procura?" />
+            <button id="btn-pesquisar-acao" class="btn btn-primary btn-search fw-bold">Pesquisar</button>
+          </div>
+
+          <div id="recipe-card" class="card-interactive max-w-2xl mx-auto p-4 d-flex align-items-center gap-4 text-start transition-element" style="max-width: 700px; margin: 0 auto" data-bs-toggle="modal" data-bs-target="#uploadModal">
+            <div class="p-3 gradient-hero rounded-4 text-white">
+              <i data-lucide="file-text" size="32"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h3 class="h5 fw-bold mb-1">Enviar Receita Médica</h3>
+              <p class="text-muted small mb-0">Envie uma foto da sua receita para uma busca automática.</p>
+            </div>
+            <i data-lucide="chevron-right" class="text-muted"></i>
+          </div>
+        </div>
+      </section>
+
+      <section id="search-results-container" class="py-2">
+        <div class="container">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h5 fw-bold mb-0" id="result-title">Resultados da busca</h2>
+            <button class="btn btn-sm btn-link text-decoration-none text-muted" onclick="voltarAoInicio()">
+              <i data-lucide="x" size="14"></i> Limpar pesquisa
+            </button>
+          </div>
+          <div id="lista-medicamentos-grid" class="row g-4">
+            </div>
+        </div>
+      </section>
+
+      <section id="features-section" class="py-5">
+        <div class="container">
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="card-elevated p-4 text-center h-100">
+                <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-block mb-3"><i data-lucide="zap" class="text-primary"></i></div>
+                <h5 class="fw-bold">Pesquisa Real-time</h5>
+                <p class="text-muted small mb-0">Stock atualizado diretamente pelas farmácias parceiras.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card-elevated p-4 text-center h-100">
+                <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-block mb-3"><i data-lucide="shield-check" class="text-primary"></i></div>
+                <h5 class="fw-bold">Segurança Total</h5>
+                <p class="text-muted small mb-0">Seus dados e receitas são tratados com sigilo absoluto.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card-elevated p-4 text-center h-100">
+                <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-block mb-3"><i data-lucide="map" class="text-primary"></i></div>
+                <h5 class="fw-bold">Geolocalização</h5>
+                <p class="text-muted small mb-0">Visualize no mapa a farmácia mais próxima de você.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="py-5 border-top bg-white mt-5">
+      <div class="container text-center text-muted small">© 2024 MedFinder. Todos os direitos reservados.</div>
+    </footer>
+
+    <div class="modal fade" id="uploadModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+          <div class="modal-header border-0 pb-0">
+            <div>
+              <h5 class="modal-title fw-bold">Enviar Receita Médica</h5>
+              <p class="text-muted small mb-0">Anexe até 3 imagens da sua receita.</p>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <button class="upload-area mb-3" id="btnUpload">
+              <i data-lucide="image" class="text-muted mb-2" size="32"></i>
+              <span class="small text-muted" id="uploadText">Clique para selecionar</span>
+            </button>
+            <div id="fileList"></div>
+            <div class="d-flex gap-2 mt-4">
+              <button class="btn btn-light w-100 fw-bold rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+              <button class="btn btn-primary w-100 fw-bold rounded-pill" id="btnConfirm" disabled>Confirmar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+      lucide.createIcons();
+
+      const inputPesquisa = document.getElementById('input-pesquisa');
+      const btnPesquisar = document.getElementById('btn-pesquisar-acao');
+      const heroContent = document.getElementById('hero-content');
+      const recipeCard = document.getElementById('recipe-card');
+      const featuresSection = document.getElementById('features-section');
+      const resultsContainer = document.getElementById('search-results-container');
+      const resultsGrid = document.getElementById('lista-medicamentos-grid');
+      const heroSection = document.getElementById('hero-section');
+
+      btnPesquisar.addEventListener('click', async () => {
+        const termo = inputPesquisa.value.trim();
+        if (!termo) return; 
+
+        try {
+          const url = `/medicamento/pesquisar?q=${encodeURIComponent(termo)}`;
+          
+          heroContent.classList.add('fade-out');
+          recipeCard.classList.add('fade-out');
+          featuresSection.classList.add('fade-out');
+
+          const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+          const result = await response.json();
+
+          if (result.sucesso) {
+            setTimeout(() => exibirResultados(result.medicamentos), 300);
+          } else {
+            voltarAoInicio();
+          }
+        } catch (error) {
+          console.error("Erro na busca:", error);
+          voltarAoInicio();
+        }
+      });
+
+      function exibirResultados(medicamentos) {
+        resultsGrid.innerHTML = "";
+        
+        if (medicamentos.length === 0) {
+          resultsGrid.innerHTML = `<div class="col-12 text-center py-5 card-result-anim"><p class="text-muted">Nenhum medicamento encontrado para esta busca.</p></div>`;
+        } else {
+          medicamentos.forEach((med, index) => {
+            const delayClass = `stagger-${(index % 4) + 1}`;
+            const card = `
+              <div class="col-md-6 col-lg-4 card-result-anim ${delayClass}">
+                <div class="card-elevated p-4 h-100">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3">${med.dosagem || 'N/A'}</span>
+                    <h5 class="text-primary fw-bold mb-0">${Number(med.preco).toLocaleString('pt-AO')} Kzs</h5>
+                  </div>
+                  <h4 class="h5 fw-bold mb-1">${med.nome}</h4>
+                  <p class="text-muted small mb-3">${med.descricao || ''}</p>
+                  <hr class="my-3 opacity-25">
+                  <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="p-2 bg-light rounded-circle">
+                        <i data-lucide="map-pin" size="14" class="text-danger"></i>
+                    </div>
+                    <div>
+                      <p class="fw-bold small mb-0">${med.nome_farmacia}</p>
+                      <p class="text-muted mb-0" style="font-size: 0.75rem;">${med.endereco}</p>
+                    </div>
+                  </div>
+                  <button class="btn btn-sm btn-outline-primary w-100 rounded-pill fw-medium">Ver detalhes</button>
+                </div>
+              </div>
+            `;
+            resultsGrid.innerHTML += card;
+          });
+        }
+
+        heroSection.style.marginTop = "0";
+        heroSection.classList.remove('py-5');
+        heroSection.classList.add('pt-4', 'pb-0');
+        
+        heroContent.style.display = 'none';
+        recipeCard.style.display = 'none';
+        featuresSection.style.display = 'none';
+        
+        resultsContainer.style.display = 'block';
+        setTimeout(() => { 
+          resultsContainer.style.opacity = '1'; 
+          lucide.createIcons();
+        }, 50);
+      }
+
+      function voltarAoInicio() {
+        resultsContainer.style.opacity = '0';
+        setTimeout(() => {
+          resultsContainer.style.display = 'none';
+          
+          heroSection.style.marginTop = "3rem";
+          heroSection.classList.add('py-5');
+          heroSection.classList.remove('pt-4', 'pb-0');
+          
+          heroContent.style.display = 'block';
+          recipeCard.style.display = 'flex';
+          featuresSection.style.display = 'block';
+          
+          heroContent.classList.remove('fade-out');
+          recipeCard.classList.remove('fade-out');
+          featuresSection.classList.remove('fade-out');
+          inputPesquisa.value = "";
+          lucide.createIcons();
+        }, 400);
+      }
+
+      const files = [];
+      const btnUpload = document.getElementById("btnUpload");
+      const fileList = document.getElementById("fileList");
+      const btnConfirm = document.getElementById("btnConfirm");
+      const uploadText = document.getElementById("uploadText");
+
+      btnUpload.addEventListener("click", () => {
+        if (files.length < 3) {
+          const fileName = `receita_medica_${files.length + 1}.jpg`;
+          files.push(fileName);
+          renderFiles();
+        }
+      });
+
+      function renderFiles() {
+        fileList.innerHTML = "";
+        files.forEach((file, index) => {
+          const div = document.createElement("div");
+          div.className = "file-item d-flex align-items-center justify-content-between p-2 bg-light rounded-3 mb-2";
+          div.innerHTML = `
+            <div class="d-flex align-items-center gap-2">
+                <i data-lucide="file-image" class="text-primary" size="16"></i>
+                <span class="small fw-medium">${file}</span>
+            </div>
+            <button class="btn btn-sm text-danger border-0" onclick="removeFile(${index})">
+                <i data-lucide="trash-2" size="16"></i>
+            </button>`;
+          fileList.appendChild(div);
+        });
+        btnConfirm.disabled = files.length === 0;
+        uploadText.innerText = files.length >= 3 ? "Limite máximo" : "Clique para selecionar";
+        lucide.createIcons();
+      }
+
+      window.removeFile = (index) => {
+        files.splice(index, 1);
+        renderFiles();
+      };
+    </script>
+  </body>
+</html>

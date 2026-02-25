@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MedFinder - Criar Conta</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="/base/css/toast.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      :root {
+        --primary: #0d6efd;
+        --primary-foreground: #ffffff;
+        --background: #f8f9fa;
+        --border: #e9ecef;
+        --muted: #6c757d;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--background);
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      .min-vh-100 {
+        min-height: 100vh;
+      }
+
+      .gradient-hero {
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .logo-box {
+        width: 96px;
+        height: 96px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .plus-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 20px;
+        height: 20px;
+        background: #dc3545;
+        border-radius: 50%;
+        font-size: 12px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .feature-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        backdrop-filter: blur(5px);
+        width: 100%;
+        max-width: 320px;
+      }
+
+      .card-elevated {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border);
+      }
+
+      .form-control {
+        height: 3rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border);
+      }
+
+      #botao-azul {
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+        color: white;
+        border: none;
+        height: 3rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      #botao-azul:hover {
+        opacity: 0.9;
+        color: white;
+        transform: translateY(-1px);
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .cursor-pointer {
+        cursor: pointer;
+      }
+
+      @media (max-width: 991.98px) {
+        .branding-side {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid p-0">
+      <div class="row g-0 min-vh-100">
+        <div
+          class="col-lg-6 branding-side gradient-hero d-flex flex-column justify-content-center align-items-center text-white p-5"
+        >
+          <div class="hero-overlay"></div>
+
+          <div
+            class="position-relative z-1 w-100 d-flex flex-column align-items-center"
+          >
+            <i
+              data-lucide="sparkles"
+              class="position-absolute opacity-25"
+              style="top: -40px; left: 20px; width: 32px; height: 32px"
+            ></i>
+
+            <div class="logo-box mb-4">
+              <div class="position-relative">
+                <i data-lucide="heart" style="width: 48px; height: 48px"></i>
+                <div class="plus-badge">+</div>
+              </div>
+            </div>
+
+            <h1 class="display-5 fw-bold mb-4">MedFinder</h1>
+
+            <div class="d-flex flex-column gap-3 w-100 align-items-center">
+              <div class="feature-item d-flex align-items-center gap-3">
+                <div class="bg-white bg-opacity-25 rounded-circle p-1">
+                  <i data-lucide="check" size="18"></i>
+                </div>
+                <span>Encontre medicamentos rapidamente</span>
+              </div>
+              <div class="feature-item d-flex align-items-center gap-3">
+                <div class="bg-white bg-opacity-25 rounded-circle p-1">
+                  <i data-lucide="check" size="18"></i>
+                </div>
+                <span>Controle as suas tomas diárias</span>
+              </div>
+              <div class="feature-item d-flex align-items-center gap-3">
+                <div class="bg-white bg-opacity-25 rounded-circle p-1">
+                  <i data-lucide="check" size="18"></i>
+                </div>
+                <span>Conecte-se com farmácias locais</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="col-lg-6 d-flex align-items-center justify-content-center p-4"
+        >
+          <div class="w-100" style="max-width: 450px">
+            <div
+              class="d-lg-none d-flex align-items-center justify-content-center gap-2 mb-4"
+            >
+              <div
+                class="p-2 gradient-hero rounded-3 d-flex align-items-center justify-content-center"
+              >
+                <i data-lucide="pill" class="text-white" size="24"></i>
+              </div>
+              <span class="h3 fw-bold mb-0 text-primary">MedFinder</span>
+            </div>
+
+            <div class="card-elevated p-4 p-md-5">
+              <div class="text-center mb-4">
+                <h2 class="fw-bold h3 mb-1">Criar Conta</h2>
+                <p class="text-muted">Registe-se para começar</p>
+              </div>
+
+              <form
+                id="registerForm"
+                action="/autenticacao/criar-conta"
+                method="POST"
+              >
+                <div class="mb-3">
+                  <label for="name" class="form-label small fw-semibold"
+                    >Nome Completo</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    name="nome"
+                    placeholder="O seu nome"
+                    
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="email" class="form-label small fw-semibold"
+                    >Email</label
+                  >
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="seu@email.com"
+                    
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="phone" class="form-label small fw-semibold"
+                    >Número de Telefone</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="phone"
+                    name="telefone"
+                    placeholder="9XXXXXXXX"
+                    
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="password" class="form-label small fw-semibold"
+                    >Senha</label
+                  >
+                  <div class="position-relative">
+                    <input
+                      type="password"
+                      class="form-control pe-5"
+                      id="password"
+                      name="senha"
+                      placeholder="Digite a sua senha"
+                      
+                    />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      data-target="password"
+                    >
+                      <i data-lucide="eye" size="20"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label
+                    for="confirmarSenha"
+                    class="form-label small fw-semibold"
+                    >Confirmar Senha</label
+                  >
+                  <div class="position-relative">
+                    <input
+                      type="password"
+                      class="form-control pe-5"
+                      id="confirmarSenha"
+                      name="confirmarSenha"
+                      placeholder="Confirme a sua senha"
+                      
+                    />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      data-target="confirmarSenha"
+                    >
+                      <i data-lucide="eye" size="20"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input cursor-pointer"
+                      id="terms"
+                      
+                    />
+                    <label
+                      class="form-check-label small text-muted cursor-pointer"
+                      for="terms"
+                    >
+                      Concordo com os
+                      <a href="#" class="text-primary text-decoration-none"
+                        >Termos de Serviço</a
+                      >
+                      e
+                      <a href="#" class="text-primary text-decoration-none"
+                        >Política de Privacidade</a
+                      >
+                    </label>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn w-100" id="botao-azul">
+                  Criar Conta
+                </button>
+              </form>
+
+              <p class="text-center mt-4 mb-0 small text-muted">
+                Já tem conta?
+                <a
+                  href="/autenticacao/entrar"
+                  class="text-primary fw-semibold text-decoration-none"
+                  >Entrar</a
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/geral/manipulador-requisicao.js"></script>
+    <script src="/base/js/base.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        lucide.createIcons();
+
+        const toggleButtons = document.querySelectorAll(".password-toggle");
+        toggleButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const targetId = this.getAttribute("data-target");
+            const input = document.getElementById(targetId);
+            const isPassword = input.type === "password";
+
+            input.type = isPassword ? "text" : "password";
+            this.innerHTML = isPassword
+              ? '<i data-lucide="eye-off" size="20"></i>'
+              : '<i data-lucide="eye" size="20"></i>';
+
+            lucide.createIcons();
+          });
+        });
+
+        const registerForm = document.getElementById("registerForm");
+        if (registerForm) {
+          registerForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            manipuladorRequisicao(this, true);
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

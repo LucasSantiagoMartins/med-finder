@@ -1,0 +1,241 @@
+<style>
+  :root {
+    --sidebar-width: 260px;
+    --sidebar-bg: #ffffff;
+    --sidebar-accent: #f0f7ff;
+    --primary-color: #0d6efd;
+  }
+
+  .sidebar {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    border-right: 1px solid #e9ecef;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: all 0.3s;
+  }
+
+  .sidebar-header {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #f8f9fa;
+  }
+
+  .logo-icon {
+    background: var(--primary-color);
+    color: white;
+    padding: 8px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-text {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    margin: 0;
+  }
+
+  .sidebar-content {
+    flex-grow: 1;
+    padding: 1.5rem 1rem;
+    overflow-y: auto;
+  }
+
+  .nav-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    color: #adb5bd;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    padding-left: 0.75rem;
+  }
+
+  .nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-item {
+    width: 100%;
+  }
+
+  .nav-link-custom {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    color: #6c757d;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+
+  .nav-link-custom:hover {
+    background: var(--sidebar-accent);
+    color: var(--primary-color);
+  }
+
+  .nav-link-custom.active {
+    background: var(--sidebar-accent);
+    color: var(--primary-color);
+    font-weight: 600;
+  }
+
+  .sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #f8f9fa;
+  }
+
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #495057;
+  }
+
+  .user-info p {
+    margin: 0;
+    line-height: 1.2;
+  }
+  .user-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .user-role {
+    font-size: 0.75rem;
+    color: #adb5bd;
+  }
+
+  @media (min-width: 992px) {
+    body {
+      padding-left: var(--sidebar-width);
+    }
+  }
+</style>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-icon">
+      <i data-lucide="pill"></i>
+    </div>
+    <a href="/" class="text-decoration-none">
+      <h2 class="logo-text">MedFinder</h2>
+    </a>
+  </div>
+
+  <div class="sidebar-content">
+    <p class="nav-label">Menu Principal</p>
+
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a
+          href="/farmacia/painel"
+          class="nav-link-custom <%= (typeof activePage !== 'undefined' && activePage === 'painel') ? 'active' : '' %>"
+        >
+          <i data-lucide="layout-dashboard" size="20"></i>
+          <span>Painel</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          href="/farmacia/medicamentos"
+          class="nav-link-custom <%= (typeof activePage !== 'undefined' && activePage === 'medicamentos') ? 'active' : '' %>"
+        >
+          <i data-lucide="package" size="20"></i>
+          <span>Medicamentos</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          href="/farmacia/adicionar-medicamento"
+          class="nav-link-custom <%= (typeof activePage !== 'undefined' && activePage === 'adicionar-medicamento') ? 'active' : '' %>"
+        >
+          <i data-lucide="package" size="20"></i>
+          <span>Adicionar Medicamento</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          href="/farmacia/atualizar-estoque"
+          class="nav-link-custom <%= (typeof activePage !== 'undefined' && activePage === 'atualizar-estoque') ? 'active' : '' %>"
+        >
+          <i data-lucide="refresh-cw" size="20"></i>
+          <span>Atualizar Estoque</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          href="/farmacia/atualizacoes-estoque"
+          class="nav-link-custom <%= (typeof activePage !== 'undefined' && activePage === 'atualizacoes-estoque') ? 'active' : '' %>"
+        >
+          <i data-lucide="history" size="20"></i>
+          <span>Atualizações de Estoque</span>
+        </a>
+      </li>
+    </ul>
+
+    <p class="nav-label mt-4">Configurações</p>
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="#" class="nav-link-custom">
+          <i data-lucide="settings" size="20"></i>
+          <span>Definições</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-profile">
+      <div class="user-avatar">
+        <i data-lucide="user" size="20"></i>
+      </div>
+      <div class="user-info">
+        <p class="user-name"><%= usuario.nome %></p>
+        <p class="user-role"><%= usuario.tipo_usuario.toUpperCase() %></p>
+      </div>
+    </div>
+    <a
+      href="/autenticacao/logout"
+      class="btn btn-sm btn-outline-danger w-100 mt-3 d-flex align-items-center justify-content-center gap-2"
+    >
+      <i data-lucide="log-out" size="16"></i> Sair
+    </a>
+  </div>
+</aside>
+
+<script>
+  if (typeof lucide !== "undefined") {
+    lucide.createIcons();
+  }
+</script>

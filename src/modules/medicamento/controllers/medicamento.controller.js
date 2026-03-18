@@ -19,16 +19,15 @@ exports.pesquisarMedicamento = async (req, res) => {
     let params = [];
 
     if (termoPesquisa) {
-      querySQL +=
-        " WHERE m.nome LIKE ? OR m.dosagem LIKE ? OR m.descricao LIKE ?";
+      querySQL += " WHERE m.nome LIKE ? OR m.dosagem LIKE ?";
       const likeTermo = `%${termoPesquisa}%`;
-      params.push(likeTermo, likeTermo, likeTermo);
+      params.push(likeTermo, likeTermo);
     }
 
     querySQL += " ORDER BY m.nome ASC";
 
     const [medicamentos] = await db.query(querySQL, params);
-    console.log(medicamentos)
+
     res.json({
       sucesso: true,
       contagem: medicamentos.length,
@@ -42,3 +41,5 @@ exports.pesquisarMedicamento = async (req, res) => {
     });
   }
 };
+
+

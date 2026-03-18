@@ -186,7 +186,7 @@
                   <strong><%= usuario.nome %></strong><br/><%= usuario.tipo_usuario %>
                 </li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="/perfil">Meu Perfil</a></li>
+                <li><a class="dropdown-item" href="/farmacia/painel">Painel da fármacia</a></li>
                 <li><a class="dropdown-item text-danger" href="/autenticacao/logout">Terminar Sessão</a></li>
               </ul>
             </div>
@@ -343,7 +343,7 @@
         } else {
           medicamentos.forEach((med, index) => {
             const delayClass = `stagger-${(index % 4) + 1}`;
-            const fotoFarmacia = med.foto_farmacia ? `http://localhost:8081${med.foto_farmacia}` : 'https://placehold.co/600x400?text=Farmacia';
+            const fotoFarmacia = med.foto_farmacia ? `http://localhost:8081/uploads/${med.foto_farmacia}` : 'https://placehold.co/600x400?text=Farmacia';
             const card = `
               <div class="col-md-6 col-lg-4 card-result-anim ${delayClass}">
                 <div class="card-elevated h-100">
@@ -360,7 +360,6 @@
                             <h3 class="h5 fw-bold mb-0 text-primary">${med.nome}</h3>
                             <span class="badge bg-white text-primary border border-primary-subtle rounded-pill">${med.dosagem || ''} mg</span>
                         </div>
-                        <p class="text-muted small mb-2 text-truncate">${med.descricao || 'Sem descrição disponível'}</p>
                         <div class="fw-bold fs-5 text-dark">
                             ${Number(med.preco).toLocaleString('pt-AO')} <span class="small">Kzs</span>
                         </div>

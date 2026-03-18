@@ -72,6 +72,7 @@ async function manipuladorRequisicao(formOrUrl, useJson = false, options = {}) {
       showToast("error", result.mensagem || "Erro na resposta.");
     }
   } catch (err) {
+    console.log(err.message)
     showToast("error", err.message || "Erro ao processar.");
   }
 }

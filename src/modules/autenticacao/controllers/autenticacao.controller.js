@@ -100,8 +100,8 @@ exports.criarUsuarioInterno = async (dados) => {
 
   const insertSQL = `
     INSERT INTO usuario 
-    (nome, email, telefone, senha_hash, tipo_usuario) 
-    VALUES (?, ?, ?, ?, ?)
+    (nome, email, telefone, senha_hash, tipo_usuario, data_criacao) 
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
 
   await db.query(insertSQL, [
@@ -110,6 +110,7 @@ exports.criarUsuarioInterno = async (dados) => {
     telefone,
     senhaHash,
     tipo_usuario,
+    new Date()
   ]);
 
   const [rows] = await db.query("SELECT * FROM usuario WHERE telefone = ?", [

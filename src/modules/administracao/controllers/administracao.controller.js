@@ -107,7 +107,7 @@ exports.adicionarFarmacia = async (req, res) => {
     senhaGerente,
     confirmarSenha,
   } = req.body;
-  const foto_url = req.file ? `/uploads/farmacias/${req.file.filename}` : null;
+  const foto_url = req.file ? `/farmacias/${req.file.filename}` : null;
 
   try {
     if (

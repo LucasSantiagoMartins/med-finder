@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const medicamentoContrlller = require("../controllers/medicamento.controller");
+const medicamentoController = require("../controllers/medicamento.controller");
 
-router.get("/pesquisar", medicamentoContrlller.pesquisarMedicamento);
+
+router.get("/pesquisar", medicamentoController.pesquisarMedicamento);
+
 
 module.exports = router;

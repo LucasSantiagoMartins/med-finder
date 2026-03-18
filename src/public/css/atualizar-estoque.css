@@ -1,0 +1,80 @@
+:root {
+  --primary: #0d6efd;
+  --background: #f8f9fa;
+  --border: #e9ecef;
+  --success: #198754;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--background);
+}
+.main-content {
+  padding: 2rem;
+  flex-grow: 1;
+}
+
+.card-elevated {
+  background: white;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.upload-area {
+  border: 2px dashed var(--border);
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: white;
+}
+
+.upload-area.dragging {
+  border-color: var(--primary);
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+.upload-area.complete {
+  border-color: var(--success);
+  background-color: rgba(25, 135, 84, 0.05);
+}
+
+.icon-box {
+  width: 64px;
+  height: 64px;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, #0d6efd 0%, #0043a8 100%);
+  color: white;
+}
+
+.progress {
+  height: 8px;
+  border-radius: 4px;
+  background-color: #eee;
+}
+
+.table-instructions thead th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #6c757d;
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem;
+}
+.table-instructions td {
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: #495057;
+}
+
+.tip-box {
+  border-left: 4px solid var(--primary);
+}

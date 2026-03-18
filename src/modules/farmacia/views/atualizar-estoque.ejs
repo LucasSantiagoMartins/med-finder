@@ -13,90 +13,9 @@
       rel="stylesheet"
     />
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-      :root {
-        --primary: #0d6efd;
-        --background: #f8f9fa;
-        --border: #e9ecef;
-        --success: #198754;
-      }
-
-      body {
-        font-family: "Inter", sans-serif;
-        background-color: var(--background);
-      }
-      .main-content {
-        padding: 2rem;
-        flex-grow: 1;
-      }
-
-      .card-elevated {
-        background: white;
-        border-radius: 1rem;
-        border: 1px solid var(--border);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-      }
-
-      /* Área de Drop */
-      .upload-area {
-        border: 2px dashed var(--border);
-        border-radius: 1.5rem;
-        padding: 3rem 2rem;
-        text-align: center;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        background: white;
-      }
-
-      .upload-area.dragging {
-        border-color: var(--primary);
-        background-color: rgba(13, 110, 253, 0.05);
-      }
-
-      .upload-area.complete {
-        border-color: var(--success);
-        background-color: rgba(25, 135, 84, 0.05);
-      }
-
-      .icon-box {
-        width: 64px;
-        height: 64px;
-        border-radius: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem;
-      }
-
-      .gradient-hero {
-        background: linear-gradient(135deg, #0d6efd 0%, #0043a8 100%);
-        color: white;
-      }
-
-      .progress {
-        height: 8px;
-        border-radius: 4px;
-        background-color: #eee;
-      }
-
-      /* Tabela de Instruções */
-      .table-instructions thead th {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        color: #6c757d;
-        border-bottom: 1px solid var(--border);
-        padding: 0.75rem;
-      }
-      .table-instructions td {
-        padding: 0.75rem;
-        font-size: 0.875rem;
-        color: #495057;
-      }
-
-      .tip-box {
-        border-left: 4px solid var(--primary);
-      }
-    </style>
+    <link href="/css/atualizar-estoque.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="/base/css/toast.css" />
   </head>
   <body>
     <div class="d-flex">
@@ -105,74 +24,82 @@
       <main class="main-content">
         <div class="container" style="max-width: 800px">
           <div class="mb-4">
-            <h1 class="h3 fw-bold mb-1">Enviar Ficheiro CSV</h1>
+            <h1 class="h3 fw-bold mb-1">Atualizar Stock via Excel/CSV</h1>
             <p class="text-muted">
-              Atualize o stock da sua farmácia rapidamente
+              Importe a lista de medicamentos da sua farmácia rapidamente.
             </p>
           </div>
 
           <div class="card-elevated p-4 mb-4">
-            <div id="dropZone" class="upload-area">
-              <input type="file" id="fileInput" class="d-none" accept=".csv" />
+            <form
+              id="medicamentoForm"
+              action="/farmacia/atualizar-estoque"
+              method="POST"
+              enctype="multipart/form-data"
+            >
+              <div id="dropZone" class="upload-area">
+                <input
+                  type="file"
+                  id="fileInput"
+                  name="planilha"
+                  class="d-none"
+                  accept=".csv, .xlsx, .xls"
+                />
 
-              <div id="stateInitial">
-                <div class="icon-box gradient-hero">
-                  <i data-lucide="upload" size="32"></i>
-                </div>
-                <h3 class="h5 fw-bold mb-2">Arraste o ficheiro CSV aqui</h3>
-                <p class="text-muted mb-4 small">
-                  ou clique para selecionar do seu computador
-                </p>
-                <button
-                  class="btn btn-primary px-4 py-2 fw-semibold"
-                  onclick="document.getElementById('fileInput').click()"
-                >
-                  <i data-lucide="file-spreadsheet" size="18" class="me-2"></i
-                  >Selecionar Ficheiro
-                </button>
-                <p class="text-muted mt-4" style="font-size: 0.7rem">
-                  Formatos aceites: .csv • Tamanho máximo: 10MB
-                </p>
-              </div>
-
-              <div id="stateUploading" class="d-none">
-                <div id="iconStatus" class="icon-box bg-light">
-                  <i
-                    data-lucide="file-spreadsheet"
-                    size="32"
-                    class="text-primary"
-                  ></i>
-                </div>
-                <div class="mb-3">
-                  <p id="fileName" class="fw-bold mb-1">nome_do_arquivo.csv</p>
-                  <p id="uploadStatusText" class="small text-muted">
-                    A enviar...
+                <div id="stateInitial">
+                  <div class="icon-box gradient-hero">
+                    <i data-lucide="upload" size="32"></i>
+                  </div>
+                  <h3 class="h5 fw-bold mb-2">Arraste o ficheiro aqui</h3>
+                  <p class="text-muted mb-4 small">
+                    ou clique para selecionar do seu computador
+                  </p>
+                  <button
+                    type="button"
+                    class="btn btn-primary px-4 py-2 fw-semibold"
+                    onclick="document.getElementById('fileInput').click()"
+                  >
+                    <i data-lucide="file-spreadsheet" size="18" class="me-2"></i
+                    >Selecionar Ficheiro
+                  </button>
+                  <p class="text-muted mt-4" style="font-size: 0.7rem">
+                    Formatos aceites: .csv, .xlsx • Tamanho máximo: 10MB
                   </p>
                 </div>
-                <div class="progress mb-4 mx-auto" style="max-width: 300px">
-                  <div
-                    id="progressBar"
-                    class="progress-bar progress-bar-striped progress-bar-animated"
-                    role="progressbar"
-                    style="width: 0%"
-                  ></div>
-                </div>
-                <div id="successActions" class="d-none">
-                  <button
-                    class="btn btn-outline-secondary btn-sm"
-                    onclick="resetUpload()"
-                  >
-                    Enviar Outro Ficheiro
-                  </button>
+
+                <div id="stateUploading" class="d-none">
+                  <div id="iconStatus" class="icon-box bg-light">
+                    <i
+                      data-lucide="file-spreadsheet"
+                      size="32"
+                      class="text-primary"
+                    ></i>
+                  </div>
+                  <div class="mb-3">
+                    <p id="fileName" class="fw-bold mb-1">
+                      nome_do_arquivo.csv
+                    </p>
+                    <p id="uploadStatusText" class="small text-muted">
+                      A processar ficheiro...
+                    </p>
+                  </div>
+                  <div class="progress mb-4 mx-auto" style="max-width: 300px">
+                    <div
+                      id="progressBar"
+                      class="progress-bar progress-bar-striped progress-bar-animated"
+                      role="progressbar"
+                      style="width: 0%"
+                    ></div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
 
           <div class="card-elevated p-4 mb-4">
             <h3 class="h6 fw-bold mb-3 d-flex align-items-center">
               <i data-lucide="info" size="18" class="me-2 text-primary"></i
-              >Formato do Ficheiro CSV
+              >Formato do Ficheiro
             </h3>
             <div class="table-responsive">
               <table class="table table-instructions mb-3">
@@ -202,7 +129,7 @@
                   <tr>
                     <td>preco</td>
                     <td>Número</td>
-                    <td>2500.00</td>
+                    <td>2500</td>
                   </tr>
                 </tbody>
               </table>
@@ -212,48 +139,32 @@
               Template
             </button>
           </div>
-
-          <div class="card-elevated p-4 tip-box bg-light">
-            <div class="d-flex gap-3">
-              <i data-lucide="alert-circle" class="text-primary mt-1"></i>
-              <div>
-                <h4 class="h6 fw-bold mb-1">
-                  Dicas para um envio bem-sucedido
-                </h4>
-                <ul class="list-unstyled small text-muted mb-0">
-                  <li>
-                    • Verifique se todas as colunas obrigatórias estão presentes
-                  </li>
-                  <li>• Use vírgula como separador decimal (ex: 2500.00)</li>
-                  <li>• Remova linhas vazias ou cabeçalhos extras</li>
-                </ul>
-              </div>
-            </div>
-          </div>
         </div>
       </main>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/geral/manipulador-requisicao.js"></script>
+    <script src="/base/js/base.js"></script>
+
     <script>
       const dropZone = document.getElementById("dropZone");
       const fileInput = document.getElementById("fileInput");
+      const medicamentoForm = document.getElementById("medicamentoForm");
       const stateInitial = document.getElementById("stateInitial");
       const stateUploading = document.getElementById("stateUploading");
       const progressBar = document.getElementById("progressBar");
       const uploadStatusText = document.getElementById("uploadStatusText");
-      const iconStatus = document.getElementById("iconStatus");
-      const successActions = document.getElementById("successActions");
 
-      // Drag and Drop Events
-      ["dragenter", "dragover"].forEach((eventName) => {
-        dropZone.addEventListener(eventName, (e) => {
+      ["dragenter", "dragover"].forEach((name) => {
+        dropZone.addEventListener(name, (e) => {
           e.preventDefault();
           dropZone.classList.add("dragging");
         });
       });
 
-      ["dragleave", "drop"].forEach((eventName) => {
-        dropZone.addEventListener(eventName, (e) => {
+      ["dragleave", "drop"].forEach((name) => {
+        dropZone.addEventListener(name, (e) => {
           e.preventDefault();
           dropZone.classList.remove("dragging");
         });
@@ -261,58 +172,59 @@
 
       dropZone.addEventListener("drop", (e) => {
         const file = e.dataTransfer.files[0];
-        if (file && file.name.endsWith(".csv")) {
-          startSimulation(file.name);
+        if (file) {
+          fileInput.files = e.dataTransfer.files;
+          iniciarEnvio(file.name);
         }
       });
 
       fileInput.addEventListener("change", (e) => {
         if (e.target.files.length > 0) {
-          startSimulation(e.target.files[0].name);
+          iniciarEnvio(e.target.files[0].name);
         }
       });
 
-      function startSimulation(name) {
+      function iniciarEnvio(name) {
         stateInitial.classList.add("d-none");
         stateUploading.classList.remove("d-none");
         document.getElementById("fileName").innerText = name;
+        uploadStatusText.innerText = "A processar ficheiro...";
+        uploadStatusText.className = "small text-muted";
 
         let progress = 0;
         const interval = setInterval(() => {
-          progress += 10;
+          progress += 25;
           progressBar.style.width = progress + "%";
 
           if (progress >= 100) {
             clearInterval(interval);
-            onUploadComplete();
+            enviarFormulario();
           }
-        }, 150);
+        }, 100);
       }
 
-      function onUploadComplete() {
-        uploadStatusText.innerText = "Upload concluído!";
-        uploadStatusText.classList.replace("text-muted", "text-success");
-        dropZone.classList.add("complete");
-        iconStatus.innerHTML =
-          '<i data-lucide="check" size="32" class="text-success"></i>';
-        successActions.classList.remove("d-none");
-        lucide.createIcons();
+      async function enviarFormulario() {
+        try {
+          const sucesso = await manipuladorRequisicao(medicamentoForm, true);
+
+          if (!sucesso) {
+            resetarInterfaceComAtraso();
+          }
+        } catch (error) {
+          resetarInterfaceComAtraso();
+        }
       }
 
-      function resetUpload() {
+      function resetarInterfaceComAtraso() {
         stateInitial.classList.remove("d-none");
         stateUploading.classList.add("d-none");
-        dropZone.classList.remove("complete");
         progressBar.style.width = "0%";
-        uploadStatusText.innerText = "A enviar...";
-        uploadStatusText.classList.replace("text-success", "text-muted");
-        successActions.classList.add("d-none");
-        iconStatus.innerHTML =
-          '<i data-lucide="file-spreadsheet" size="32" class="text-primary"></i>';
-        lucide.createIcons();
+        fileInput.value = "";
       }
 
-      lucide.createIcons();
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+      });
     </script>
   </body>
 </html>

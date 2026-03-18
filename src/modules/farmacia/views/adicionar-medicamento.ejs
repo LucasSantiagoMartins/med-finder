@@ -79,8 +79,6 @@
         border-radius: 0.5rem;
       }
 
-      
-
       .btn-outline-secondary {
         border-color: var(--border);
         color: #374151;
@@ -159,42 +157,18 @@
                   required
                 />
               </div>
-              <div class="col-md-4">
-                <label for="data_vencimento" class="form-label"
-                  >Data de Vencimento</label
-                >
-                <input
-                  type="date"
-                  id="data_vencimento"
-                  name="data_vencimento"
-                  class="form-control"
-                  required
-                />
-              </div>
             </div>
-
-            <div class="row g-3 mb-4">
-              <div class="col-12">
-                <label for="descricao" class="form-label"
-                  >Descrição (Opcional)</label
-                >
-                <textarea
-                  id="descricao"
-                  name="descricao"
-                  class="form-control"
-                  rows="4"
-                  placeholder="Breve descrição sobre o medicamento..."
-                ></textarea>
-              </div>
-            </div>
-
             <div class="d-flex justify-content-end gap-3 mt-4 pt-3">
               <a
                 href="/farmacia/medicamentos"
                 class="btn btn-outline-secondary px-4"
                 >Cancelar</a
               >
-              <button type="submit" class="btn botao-primario mary px-4" id="nosso-btn">
+              <button
+                type="submit"
+                class="btn botao-primario mary px-4"
+                id="nosso-btn"
+              >
                 Registar Medicamento
               </button>
             </div>

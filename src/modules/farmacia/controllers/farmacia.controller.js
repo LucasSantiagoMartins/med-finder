@@ -5,7 +5,7 @@ exports.atualizarEstoque = async (req, res) => {
   const idUsuarioLogado = req.session.usuario.id;
   const ficheiro = req.file;
   let idFarmaciaLocalizada = null;
-  const ficheiro_url = req.file ? `/stocks/${req.file.filename}` : null;
+  const ficheiro_url = req.file ? `stocks/${req.file.filename}` : null;
 
   if (!ficheiro) {
     return res.status(400).json({
@@ -55,7 +55,7 @@ exports.atualizarEstoque = async (req, res) => {
       [idFarmaciaLocalizada, ficheiro_url || "N/A", itensSucesso, "Sucesso"],
     );
 
-    res.json({
+    return res.status(200).json({
       sucesso: true,
       mensagem: `${itensSucesso} medicamentos adicionados com sucesso!`,
     });
@@ -67,7 +67,7 @@ exports.atualizarEstoque = async (req, res) => {
       [idFarmaciaLocalizada, ficheiro_url || "N/A", 0, "Erro"],
     );
 
-    res.status(500).json({
+    return res.status(500).json({
       sucesso: false,
       mensagem: "Erro ao processar o arquivo Excel.",
     });
@@ -116,9 +116,9 @@ exports.adicionarMedicamento = async (req, res) => {
       id_farmacia,
     ]);
 
-    return res.json({
+    return res.status(200).json({
       sucesso: true,
-      mensagem: "Medicamento adicionado com sucesso",
+      mensagem: "Medicamento adicionado com sucesso!",
     });
   } catch (error) {
     console.error(error);
@@ -141,16 +141,17 @@ exports.editarMedicamento = async (req, res) => {
     );
 
     if (farmacia.length === 0) {
-      return res
-        .status(403)
-        .json({ sucesso: false, mensagem: "Acesso negado." });
+      return res.status(403).json({
+        sucesso: false,
+        mensagem: "Acesso negado. Farmácia não encontrada.",
+      });
     }
 
     const id_farmacia = farmacia[0].id_farmacia;
 
     const querySQL = `
       UPDATE medicamento 
-      SET nome = ?, dosagem = ?, quantidade = ?, preco = ?,
+      SET nome = ?, dosagem = ?, quantidade = ?, preco = ?
       WHERE id_medicamento = ? AND id_farmacia = ?
     `;
 
@@ -170,15 +171,16 @@ exports.editarMedicamento = async (req, res) => {
       });
     }
 
-    return res.json({
+    return res.status(200).json({
       sucesso: true,
       mensagem: "Medicamento atualizado com sucesso!",
     });
   } catch (error) {
     console.error("Erro ao editar medicamento:", error);
-    return res
-      .status(500)
-      .json({ sucesso: false, mensagem: "Erro interno ao atualizar." });
+    return res.status(500).json({
+      sucesso: false,
+      mensagem: "Erro interno ao atualizar o medicamento.",
+    });
   }
 };
 
@@ -193,9 +195,10 @@ exports.removerMedicamento = async (req, res) => {
     );
 
     if (farmacia.length === 0) {
-      return res
-        .status(403)
-        .json({ sucesso: false, mensagem: "Acesso negado." });
+      return res.status(403).json({
+        sucesso: false,
+        mensagem: "Acesso negado. Farmácia não encontrada.",
+      });
     }
 
     const id_farmacia = farmacia[0].id_farmacia;
@@ -212,15 +215,16 @@ exports.removerMedicamento = async (req, res) => {
       });
     }
 
-    return res.json({
+    return res.status(200).json({
       sucesso: true,
       mensagem: "Medicamento removido com sucesso!",
     });
   } catch (error) {
     console.error("Erro ao remover medicamento:", error);
-    return res
-      .status(500)
-      .json({ sucesso: false, mensagem: "Erro interno ao remover." });
+    return res.status(500).json({
+      sucesso: false,
+      mensagem: "Erro interno ao remover o medicamento.",
+    });
   }
 };
 
@@ -232,6 +236,13 @@ exports.exibirPainelFarmacia = async (req, res) => {
       "SELECT id_farmacia FROM farmacia WHERE id_gerente = ?",
       [idUsuarioLogado],
     );
+
+    if (farmacia.length === 0) {
+      return res
+        .status(404)
+        .json({ sucesso: false, mensagem: "Farmácia não encontrada." });
+    }
+
     const id_farmacia = farmacia[0].id_farmacia;
 
     const [totalMeds] = await db.execute(
@@ -249,7 +260,7 @@ exports.exibirPainelFarmacia = async (req, res) => {
       [id_farmacia],
     );
 
-    res.render("painel-farmacia", {
+    return res.render("painel-farmacia", {
       titulo: "Painel da Farmácia",
       usuario: req.session.usuario,
       activePage: "painel",
@@ -263,12 +274,14 @@ exports.exibirPainelFarmacia = async (req, res) => {
     });
   } catch (error) {
     console.error("Erro ao carregar painel:", error);
-    res.status(500).send("Erro interno do servidor");
+    return res
+      .status(500)
+      .json({ sucesso: false, mensagem: "Erro interno ao carregar o painel." });
   }
 };
 
 exports.exibirAtualizarEstoque = (req, res) => {
-  res.render("atualizar-estoque", {
+  return res.render("atualizar-estoque", {
     titulo: "Atualizar estoque",
     usuario: req.session.usuario,
     activePage: "atualizar-estoque",
@@ -285,7 +298,10 @@ exports.exibirMedicamentos = async (req, res) => {
     );
 
     if (farmacia.length === 0) {
-      return res.status(403).send("Farmácia não encontrada para este usuário.");
+      return res.status(403).json({
+        sucesso: false,
+        mensagem: "Farmácia não encontrada para este usuário.",
+      });
     }
 
     const id_farmacia = farmacia[0].id_farmacia;
@@ -295,7 +311,7 @@ exports.exibirMedicamentos = async (req, res) => {
       [id_farmacia],
     );
 
-    res.render("medicamentos", {
+    return res.render("medicamentos", {
       titulo: "Catálogo de Medicamentos",
       usuario: req.session.usuario,
       activePage: "medicamentos",
@@ -303,7 +319,10 @@ exports.exibirMedicamentos = async (req, res) => {
     });
   } catch (error) {
     console.error("Erro ao carregar medicamentos:", error);
-    res.status(500).send("Erro ao carregar a página de medicamentos.");
+    return res.status(500).json({
+      sucesso: false,
+      mensagem: "Erro ao carregar a lista de medicamentos.",
+    });
   }
 };
 
@@ -311,51 +330,46 @@ exports.exibirAtualizacoesEstoque = async (req, res) => {
   try {
     const idUsuarioLogado = req.session.usuario.id;
 
-    // 1. Procurar a farmácia do gerente logado
     const [farmacia] = await db.query(
       "SELECT id_farmacia FROM farmacia WHERE id_gerente = ?",
       [idUsuarioLogado],
     );
 
     if (farmacia.length === 0) {
-      return res.status(404).render("erros/404", {
-        titulo: "Farmácia não encontrada",
+      return res.status(404).json({
+        sucesso: false,
         mensagem:
           "Não foi possível localizar uma farmácia vinculada à sua conta de gerente.",
-        usuario: req.session.usuario,
       });
     }
 
     const id_farmacia = farmacia[0].id_farmacia;
 
-    // 2. Procurar estatísticas (Total, Sucessos, Erros)
     const [stats] = await db.query(
       `SELECT 
         COUNT(*) as total,
         SUM(CASE WHEN estado_processamento = 'Sucesso' THEN 1 ELSE 0 END) as sucessos,
         SUM(CASE WHEN estado_processamento = 'Erro' THEN 1 ELSE 0 END) as erros
-      FROM historico_atual_stock 
+      FROM historico_atualizacao_stock 
       WHERE id_farmacia = ?`,
       [id_farmacia],
     );
 
-    // 3. Procurar a lista de atualizações recentes
     const [historico] = await db.query(
       `SELECT 
         id_processamento,
-        data_hora,
+        data_criacao,
         ficheiro,
         itens_processados,
         estado_processamento
-      FROM historico_atual_stock 
+      FROM historico_atualizacao_stock 
       WHERE id_farmacia = ?
-      ORDER BY data_hora DESC 
+      ORDER BY data_criacao DESC 
       LIMIT 15`,
       [id_farmacia],
     );
 
-    // 4. Renderizar a página com os dados reais
-    res.render("atualizacoes-estoque", {
+    return res.render("atualizacoes-estoque", {
       titulo: "Atualizações de Estoque",
       usuario: req.session.usuario,
       activePage: "atualizacoes-estoque",
@@ -368,14 +382,15 @@ exports.exibirAtualizacoesEstoque = async (req, res) => {
     });
   } catch (error) {
     console.error("Erro ao carregar histórico de stock:", error);
-    res.status(500).render("erros/500", {
+    return res.status(500).json({
+      sucesso: false,
       mensagem: "Ocorreu um erro ao carregar as informações de atualização.",
     });
   }
 };
 
 exports.paginaAdicionarMedicmento = (req, res) => {
-  res.render("adicionar-medicamento", {
+  return res.render("adicionar-medicamento", {
     titulo: "Adicionar Medicamento",
     usuario: req.session.usuario,
     activePage: "adicionar-medicamento",

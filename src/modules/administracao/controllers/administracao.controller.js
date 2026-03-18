@@ -54,15 +54,13 @@ exports.exibirFormularioAdicionar = (req, res) => {
   });
 };
 
-exports.listarFarmacias = async (req, res) => {
+exports.gestaoFarmacias = async (req, res) => {
   if (
     !req.session.usuario ||
     req.session.usuario.tipo_usuario !== "administrador"
   ) {
     return res.redirect("/");
   }
-
-  console.log(req.session.usuario);
 
   try {
     const querySQL = `
@@ -72,6 +70,9 @@ exports.listarFarmacias = async (req, res) => {
         f.endereco, 
         f.telefone, 
         f.nif,
+        f.latitude,
+        f.longitude,
+        f.foto_url,
         u.nome AS nome_gerente
       FROM farmacia f
       LEFT JOIN usuario u ON f.id_gerente = u.id_usuario
@@ -80,7 +81,7 @@ exports.listarFarmacias = async (req, res) => {
 
     const [farmacias] = await db.query(querySQL);
 
-    return res.render("listar-farmacias", {
+    return res.render("gestao-farmacias", {
       titulo: "Gestão de Farmácias",
       usuario: req.session.usuario,
       activePage: "gestao",
@@ -98,24 +99,25 @@ exports.adicionarFarmacia = async (req, res) => {
     enderecoFarmacia,
     telefoneFarmacia,
     nifFarmacia,
+    latitude,
+    longitude,
     nomeGerente,
     telefoneGerente,
     emailGerente,
     senhaGerente,
     confirmarSenha,
   } = req.body;
+  const foto_url = req.file ? `/uploads/farmacias/${req.file.filename}` : null;
 
   try {
     if (
       !nomeFarmacia ||
       !enderecoFarmacia ||
-      !telefoneFarmacia ||
       !nifFarmacia ||
       !emailGerente ||
       !senhaGerente ||
       !nomeGerente ||
-      !telefoneGerente ||
-      !senhaGerente
+      !telefoneGerente
     ) {
       return res
         .status(400)
@@ -141,20 +143,24 @@ exports.adicionarFarmacia = async (req, res) => {
     }
 
     const insertFarmaciaSQL = `
-      INSERT INTO farmacia (nome, endereco, telefone, id_gerente, nif)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO farmacia (nome, endereco, telefone, id_gerente, nif, latitude, longitude, foto_url)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     await db.query(insertFarmaciaSQL, [
       nomeFarmacia,
       enderecoFarmacia,
-      telefoneFarmacia,
+      telefoneFarmacia || null,
       novoGerenteResultado.data.id_usuario,
       nifFarmacia,
+      latitude || null,
+      longitude || null,
+      foto_url,
     ]);
 
     return res.status(201).json({
       mensagem: "Farmácia e Gerente cadastrados com sucesso",
+      redirectTo: "/administracao/farmacias",
     });
   } catch (error) {
     if (error.mensagem === "Este número de telefone já está sendo usado.") {
@@ -254,9 +260,7 @@ exports.removerFarmacia = async (req, res) => {
     await db.query("DELETE FROM farmacia WHERE id_farmacia = ?", [id]);
 
     if (idGerente) {
-      await db.query("DELETE FROM usuario WHERE id_usuario = ?", [
-        idGerente,
-      ]);
+      await db.query("DELETE FROM usuario WHERE id_usuario = ?", [idGerente]);
     }
 
     await db.query("COMMIT");
@@ -270,7 +274,8 @@ exports.removerFarmacia = async (req, res) => {
 
     console.error("Erro ao remover farmácia e gerente:", error);
     return res.status(500).json({
-      mensagem: "Erro interno ao tentar remover a farmácia e o seu responsável.",
+      mensagem:
+        "Erro interno ao tentar remover a farmácia e o seu responsável.",
     });
   }
 };

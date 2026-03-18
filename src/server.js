@@ -13,7 +13,9 @@ const app = express();
 require("dotenv").config();
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -22,12 +24,17 @@ app.use(
 );
 
 app.use(session);
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 app.use(flash());
 
-app.set("view engine", "ejs");
+app.use((req, res, next) => {
+  res.locals.usuario = req.session.usuario || null;
+  next();
+});
 
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+app.set("view engine", "ejs");
 app.set("views", [
   path.join(__dirname, "views"),
   path.join(__dirname, "modules", "autenticacao", "views"),
@@ -39,10 +46,6 @@ app.use("/autenticacao", autenticaoRoutes);
 app.use("/administracao", administracaoRoutes);
 app.use("/farmacia", farmaciaRoutes);
 app.use("/medicamento", medicamentoRoutes);
-app.use((req, res, next) => {
-  res.locals.usuario = req.session.usuario || null;
-  next();
-});
 
 app.get("/", (req, res) => {
   res.render("index");

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const administracaoController = require("../controllers/administracao.controller");
 const auth = require("../../../middleware/autenticacao-middleware");
+const upload = require("../../../utils/upload-config");
 
 router.get(
   "/painel",
@@ -18,13 +19,14 @@ router.get(
 router.post(
   "/adicionar-farmacia",
   auth.permitirAcesso(["administrador"]),
+  upload.single("foto_url"),
   administracaoController.adicionarFarmacia,
 );
 
 router.get(
   "/farmacias",
   auth.permitirAcesso(["administrador"]),
-  administracaoController.listarFarmacias,
+  administracaoController.gestaoFarmacias,
 );
 
 router.delete(
@@ -36,6 +38,8 @@ router.delete(
 router.patch(
   "/editar-farmacia/:id",
   auth.permitirAcesso(["administrador"]),
+  upload.single("foto_url"),
   administracaoController.editarFarmacia,
 );
+
 module.exports = router;

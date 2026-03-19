@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^3.0.3",
     "body-parser": "^1.20.3",
     "connect-flash": "^0.1.1",
@@ -26,6 +27,8 @@
     "pg": "^8.13.1",
     "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.2",
+    "sharp": "^0.34.5",
+    "tesseract.js": "^7.0.0",
     "validator": "^13.12.0",
     "xlsx": "^0.18.5"
   }

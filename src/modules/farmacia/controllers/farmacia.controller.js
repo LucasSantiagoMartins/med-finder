@@ -51,7 +51,7 @@ exports.atualizarEstoque = async (req, res) => {
       }
     }
     await db.query(
-      "INSERT INTO historico_atualizacao_stock (id_farmacia, ficheiro, itens_processados, estado_processamento) VALUES (?, ?, ?, ?)",
+      "INSERT INTO historico_atualizacao_estoque (id_farmacia, ficheiro, itens_processados, estado_processamento) VALUES (?, ?, ?, ?)",
       [idFarmaciaLocalizada, ficheiro_url || "N/A", itensSucesso, "Sucesso"],
     );
 
@@ -63,7 +63,7 @@ exports.atualizarEstoque = async (req, res) => {
     console.error("Erro na importação:", error);
 
     await db.query(
-      "INSERT INTO historico_atualizacao_stock (id_farmacia, ficheiro, itens_processados, estado_processamento) VALUES (?, ?, ?, ?)",
+      "INSERT INTO historico_atualizacao_estoque (id_farmacia, ficheiro, itens_processados, estado_processamento) VALUES (?, ?, ?, ?)",
       [idFarmaciaLocalizada, ficheiro_url || "N/A", 0, "Erro"],
     );
 
@@ -350,7 +350,7 @@ exports.exibirAtualizacoesEstoque = async (req, res) => {
         COUNT(*) as total,
         SUM(CASE WHEN estado_processamento = 'Sucesso' THEN 1 ELSE 0 END) as sucessos,
         SUM(CASE WHEN estado_processamento = 'Erro' THEN 1 ELSE 0 END) as erros
-      FROM historico_atualizacao_stock 
+      FROM historico_atualizacao_estoque 
       WHERE id_farmacia = ?`,
       [id_farmacia],
     );
@@ -362,7 +362,7 @@ exports.exibirAtualizacoesEstoque = async (req, res) => {
         ficheiro,
         itens_processados,
         estado_processamento
-      FROM historico_atualizacao_stock 
+      FROM historico_atualizacao_estoque 
       WHERE id_farmacia = ?
       ORDER BY data_criacao DESC 
       LIMIT 15`,

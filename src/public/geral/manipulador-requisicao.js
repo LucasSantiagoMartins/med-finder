@@ -3,6 +3,7 @@ async function manipuladorRequisicao(formOrUrl, useJson = false, options = {}) {
   let headers = {};
   let url = "";
   let method = "";
+  const silent = options.silent || false;
 
   if (formOrUrl instanceof HTMLFormElement) {
     url = options.url || formOrUrl.action;
@@ -60,19 +61,28 @@ async function manipuladorRequisicao(formOrUrl, useJson = false, options = {}) {
     const result = await response.json();
 
     if (response.ok) {
-      showToast("success", result.mensagem || "Sucesso");
-      setTimeout(() => {
-        if (result.redirectTo) {
-          window.location.href = result.redirectTo;
-        } else if (["DELETE", "PATCH", "PUT"].includes(method)) {
-          window.location.reload();
-        }
-      }, 1000);
+      if (!silent) {
+        showToast("success", result.mensagem || "Sucesso");
+        setTimeout(() => {
+          if (result.redirectTo) {
+            window.location.href = result.redirectTo;
+          } else if (["DELETE", "PATCH", "PUT"].includes(method)) {
+            window.location.reload();
+          }
+        }, 1000);
+      }
+      return result;
     } else {
-      showToast("error", result.mensagem || "Erro na resposta.");
+      if (!silent) {
+        showToast("error", result.mensagem || "Erro na resposta.");
+      }
+      return result;
     }
   } catch (err) {
-    console.log(err.message)
-    showToast("error", err.message || "Erro ao processar.");
+    console.log(err.message);
+    if (!silent) {
+      showToast("error", err.message || "Erro ao processar.");
+    }
+    return { sucesso: false, mensagem: err.message };
   }
 }

@@ -8,8 +8,11 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
   <link rel="stylesheet" href="/css/index.css" />
+   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link rel="stylesheet" href="/base/css/toast.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+
 </head>
 
 <body>
@@ -52,7 +55,6 @@
   </header>
 
   <main id="main-wrapper">
-
     <section id="hero-section" class="py-5 mt-1">
       <div class="container text-center">
         <div id="hero-content" class="transition-element">
@@ -79,7 +81,7 @@
       </div>
     </section>
 
-    <section id="search-results-container" class="py-2">
+    <section id="search-results-container" class="py-2" style="display: none; opacity: 0; transition: opacity 0.3s ease;">
       <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h2 class="h5 fw-bold mb-0" id="result-title">Resultados da busca</h2>
@@ -135,14 +137,20 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+          <input type="file" id="input-file-oculto" accept="image/*" multiple style="display: none;">
+
           <button class="upload-area mb-3" id="btnUpload">
             <i data-lucide="image" class="text-muted mb-2" size="32"></i>
             <span class="small text-muted" id="uploadText">Clique para selecionar</span>
           </button>
+
           <div id="fileList"></div>
+
           <div class="d-flex gap-2 mt-4">
             <button class="btn btn-light w-100 fw-bold rounded-pill" data-bs-dismiss="modal">Cancelar</button>
-            <button class="btn btn-primary w-100 fw-bold rounded-pill" id="btnConfirm" disabled>Confirmar</button>
+            <button class="btn btn-primary w-100 fw-bold rounded-pill" id="btnConfirm" disabled>
+              <span id="textConfirm">Confirmar</span>
+            </button>
           </div>
         </div>
       </div>
@@ -151,9 +159,9 @@
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-
   <script src="/geral/index.js"></script>
+  <script src="/base/js/base.js"></script>
+  <script src="/geral/manipulador-requisicao.js"></script>
 </body>
 
 </html>

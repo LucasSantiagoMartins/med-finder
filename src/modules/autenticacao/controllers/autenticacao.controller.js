@@ -92,7 +92,7 @@ exports.criarUsuarioInterno = async (dados) => {
     return {
       error: true,
       mensagem: "Este e-mail já está sendo usado.",
-      status: 400,
+      status: 400,r
     };
   }
 
@@ -121,10 +121,10 @@ exports.criarUsuarioInterno = async (dados) => {
 };
 
 exports.entrar = async (req, res) => {
-  const { telefone, senha } = req.body;
+  const { email, senha } = req.body;
 
   try {
-    if (!telefone || !senha) {
+    if (!email || !senha) {
       return res.status(400).json({
         mensagem: "Informações inválidas.",
       });
@@ -133,8 +133,8 @@ exports.entrar = async (req, res) => {
     const [rows] = await db.query(
       `SELECT id_usuario, nome, telefone, senha_hash, tipo_usuario
        FROM usuario
-       WHERE telefone = ?`,
-      [telefone],
+       WHERE email = ?`,
+      [email],
     );
 
     if (rows.length === 0) {
